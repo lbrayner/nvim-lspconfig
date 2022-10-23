@@ -99,6 +99,15 @@ end, {
   complete = lsp_get_active_client_ids,
 })
 
+local function clear_autocmds(client, filetype)
+  vim.cmd(string.format('autocmd! lspconfig BufReadPost %s/*', vim.fn.fnameescape(client.config.root_dir)))
+  if client.config.filetypes then
+    vim.cmd('autocmd! lspconfig FileType ' .. table.concat(client.config.filetypes, ','))
+  else
+    vim.cmd 'autocmd! lspconfig BufReadPost *'
+  end
+end
+
 api.nvim_create_user_command('LspStop', function(info)
   local current_buf = vim.api.nvim_get_current_buf()
   local server_name = string.len(info.args) > 0 and info.args or nil
@@ -106,6 +115,7 @@ api.nvim_create_user_command('LspStop', function(info)
   if not server_name then
     local servers_on_buffer = vim.lsp.get_active_clients { buffer = current_buf }
     for _, client in ipairs(servers_on_buffer) do
+      clear_autocmds(client)
       local filetypes = client.config.filetypes
       if filetypes and vim.tbl_contains(filetypes, vim.bo[current_buf].filetype) then
         client.stop()
@@ -113,6 +123,7 @@ api.nvim_create_user_command('LspStop', function(info)
     end
   else
     for _, client in ipairs(get_clients_from_cmd_args(server_name)) do
+      clear_autocmds(client)
       client.stop()
     end
   end
