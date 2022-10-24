@@ -99,12 +99,14 @@ end, {
   complete = lsp_get_active_client_ids,
 })
 
-local function clear_autocmds(client, filetype)
+local function clear_autocmds(client)
   vim.cmd(string.format('autocmd! lspconfig BufReadPost %s/*', vim.fn.fnameescape(client.config.root_dir)))
-  if client.config.filetypes then
-    vim.cmd('autocmd! lspconfig FileType ' .. table.concat(client.config.filetypes, ','))
-  else
-    vim.cmd 'autocmd! lspconfig BufReadPost *'
+  if client.config.autostart == true then
+    if client.config.filetypes then
+      vim.cmd('autocmd! lspconfig FileType ' .. table.concat(client.config.filetypes, ','))
+    else
+      vim.cmd 'autocmd! lspconfig BufReadPost *'
+    end
   end
 end
 
