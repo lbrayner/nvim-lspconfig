@@ -107,6 +107,7 @@ local function clear_autocmds(client)
     end
   end
   if client.config.autostart == true then
+    -- TODO single_file_clients
     -- TODO what if there is another instance of the same LS?
     if client.config.filetypes then
       vim.cmd('autocmd! lspconfig FileType ' .. table.concat(client.config.filetypes, ','))
