@@ -99,6 +99,7 @@ end, {
   complete = lsp_get_active_client_ids,
 })
 
+-- TODO test running setup again in the same session
 local function clear_autocmds(client)
   vim.cmd(string.format('autocmd! lspconfig BufReadPost %s/*', vim.fn.fnameescape(client.config.root_dir)))
   for _, autocmd in ipairs(vim.api.nvim_get_autocmds({ event="BufEnter", group="lspconfig" })) do
